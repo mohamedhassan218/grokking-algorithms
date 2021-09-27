@@ -15,6 +15,7 @@ array1 = [2,5,6,8,9,6,5,2,1,8,7,45,45,45,87,78,96,5]
 print (binarysearch_iteration(array1,45))
 #Binary search Chapter1 test from gomaa
 # my test from froking repo
+#change from mohassans laptop
 #***********************************************************************************************************
 
 def findsmallest(arr):
