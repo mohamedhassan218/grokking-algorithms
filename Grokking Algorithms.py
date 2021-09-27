@@ -16,6 +16,7 @@ print (binarysearch_iteration(array1,45))
 #Binary search Chapter1 test from gomaa
 # my test from froking repo
 #change from mohassans laptoptest3
+# my change as a contributor
 #***********************************************************************************************************
 
 def findsmallest(arr):
