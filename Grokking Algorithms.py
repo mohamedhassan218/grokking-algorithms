@@ -204,6 +204,7 @@ while node is not None :
             perants[n] = node 
     processed.append(node)
     node = find_lowest_cost_node(costs)
+    #doesn't tested yet
 
 #Dijkstra's algorithm chapter 7
 #**************************************************************************************************************
@@ -226,7 +227,7 @@ while states_needed :
     states_needed -= states_covered
     final_station.add(best_station)
 print (final_station)
-
+ #doesn't tested yet
 
 
 
