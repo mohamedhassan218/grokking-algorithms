@@ -107,3 +107,43 @@ class Particle:
     
     def clear_velocity(self):
         del self.velocity[:]
+
+class PSO:
+    def __init__(self, graph, iterations, size_population, beta=1, alfa=1):
+        self.graph = graph
+        self.iterations = iterations
+        self.size_population = size_population
+        self.particles = []
+        self.beta = beta
+        self.alfa = alfa
+        solutions = self.graph.get_random_pathes(self.size_population)
+        if not solutions:
+            print("Initial population empty. Try run the algorithm again please.")
+            sys.exit(1)
+        for solution in solutions:
+            particle = Particle(solution=solution, cost=graph.get_cost_path(solution))
+            self.particles.append(particle)
+        self.size_population = len(self.particles)  
+    
+    def set_gbest(self, new_gbest):
+        self.gbest = new_gbest
+    
+    def get_gbest(self):
+        return self.gbest
+    
+    def show_particles(self):
+        print("Showing particles . . . . \n")
+        for particle in self.particles:
+            print("pbest: %s\t|\tcost pbest: %d\t|\tcurrent solution: %s\t|\tcost current solution: %d" \
+                   % (str(particle.get_pbest()), particle.get_cost_best(), str(particle.get_current_solution()), particle.get_cost_current_solution()))
+        print(" ")
+    
+    def run(self):
+        for t in range(self.iterations):
+            self.gbest = min(self.particles, key=attrgetter('cost_pbest_solution'))
+            for particle in self.particles:
+                particle.clear_velocity()
+                temp_velocity = []
+                solution_gbest = copy.copy(self.gbest.get_pbest())
+                solution_pbest = particle.get_pbest()[:]
+                solution_particle = particle.get_current_solution()[:]
