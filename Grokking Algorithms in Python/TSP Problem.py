@@ -33,7 +33,7 @@ class Graph():
             total_cost += self.edges[(path[i], path[i+1])]
             total_cost += self.edges[(path[self.amount_vertices - 1], path[0])]
             return total_cost
-    
+
     def get_random_pathes(self, max_size):
         random_paths, list_vertices = [], list(self.vertices)
         initial_vertice = random.choice(list_vertices)
@@ -74,40 +74,43 @@ class Particle:
         self.cost_current_solution = cost
         self.cost_pbest_solution = cost
         self.velocity = []
-    
+
     def set_pbest(self, new_pbest):
         self.pbest = new_pbest
 
     def get_pbest(self):
         return self.pbest
-    
+
     def set_velocity(self, new_velocity):
         self.velocity = new_velocity
-    
+
     def get_velocity(self):
         return self.velocity
-    
+
     def set_current_solution(self, solution):
         self.solution = solution
-    
+
     def get_current_solution(self):
         return self.solution
-    
+
     def set_cost_pbest(self, cost):
         self.cost_pbest_solution = cost
-    
+
     def get_cost_pbest(self):
         return self.cost_pbest_solution
-    
+
     def set_cost_current_solution(self, cost):
         self.cost_current_solution = cost
 
     def get_cost_current_solution(self):
         return self.cost_current_solution
-    
+
     def clear_velocity(self):
         del self.velocity[:]
 
+"""
+    Class represents the Particle Swarm Optimization algorithm.
+"""
 class PSO:
     def __init__(self, graph, iterations, size_population, beta=1, alfa=1):
         self.graph = graph
@@ -124,20 +127,20 @@ class PSO:
             particle = Particle(solution=solution, cost=graph.get_cost_path(solution))
             self.particles.append(particle)
         self.size_population = len(self.particles)  
-    
+
     def set_gbest(self, new_gbest):
         self.gbest = new_gbest
-    
+
     def get_gbest(self):
         return self.gbest
-    
+
     def show_particles(self):
         print("Showing particles . . . . \n")
         for particle in self.particles:
             print("pbest: %s\t|\tcost pbest: %d\t|\tcurrent solution: %s\t|\tcost current solution: %d" \
                    % (str(particle.get_pbest()), particle.get_cost_best(), str(particle.get_current_solution()), particle.get_cost_current_solution()))
         print(" ")
-    
+
     def run(self):
         for t in range(self.iterations):
             self.gbest = min(self.particles, key=attrgetter('cost_pbest_solution'))
@@ -147,3 +150,29 @@ class PSO:
                 solution_gbest = copy.copy(self.gbest.get_pbest())
                 solution_pbest = particle.get_pbest()[:]
                 solution_particle = particle.get_current_solution()[:]
+                for i in range(self.graph.amount_vertices):
+                    if solution_particle[i] != solution_pbest[i]:
+                        swap_operator = (i, solution_pbest.index(solution_particle[i]), self.alfa)
+                        temp_velocity.append(swap_operator)
+                        aux = solution_pbest[swap_operator[0]]
+                        solution_pbest[swap_operator[0]] = solution_pbest[swap_operator[1]]
+                        solution_pbest[swap_operatorp[1]] = aux
+                for i in range(self.graph.amount_vertices):
+                    if solution_particle[i] != solution_gbest[i]:
+                        swap_operator = (i, solution_gbest.index(solution_particle[i]), self.beta)
+                        temp_velocity.append(swap_operator)
+                        aux = solution_gbest[swap_operator[0]]
+                        solution_gbest[swap_operator[0]] = solution_gbest[swap_operator[1]]
+                        solution_gbest[swap_operator[1]] = aux
+                particle.set_velocity(temp_velocity)
+                for swap_operator in temp_velocity:
+                    if random.random() <= swap_operator[2]:
+                        aux = solution_particle[swap_operator[0]]
+                        solution_particle[swap_operator[0]] = solution_particle[swap_operator[1]]
+                        solution_particle[swap_operator[1]] =  aux
+                particle.set_current_solution(solution_particle)
+                cost_current_solution = self.graph.get_cost_path(solution_particle)
+                particle.set_cost_current_solution(cost_current_solution)
+                if cost_current_solution < particle.get_cost_pbest():
+                    particle.set_pbest(solution_particle)
+                    particle.set_cost_pbest(cost_current_solution)
